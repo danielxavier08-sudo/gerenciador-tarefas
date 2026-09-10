@@ -1,0 +1,19 @@
+{
+  "name": "gerenciador-tarefas",
+  "version": "1.0.0",
+  "description": "Gerenciador de Tarefas com Express, EJS, Sequelize, MariaDB, autenticacao e tratamento de erros",
+  "main": "server-express.js",
+  "scripts": {
+    "start": "node server-express.js",
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "mysql2": "^3.10.0",
+    "sequelize": "^6.37.3"
+  }
+}

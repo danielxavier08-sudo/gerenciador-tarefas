@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Gerenciador de Tarefas</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 380px; margin: 80px auto; background: #f5f5f5; }
+    .card { background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    input { width: 100%; padding: 8px; margin: 6px 0 14px; box-sizing: border-box; }
+    button { width: 100%; background: #2f6fed; color: #fff; border: none; padding: 10px; border-radius: 4px; cursor: pointer; }
+    .erro { color: #e0453b; margin-bottom: 10px; }
+    .dica { font-size: 13px; color: #666; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Entrar</h2>
+    <% if (erro) { %>
+      <p class="erro"><%= erro %></p>
+    <% } %>
+    <form method="POST" action="/login">
+      <label>E-mail</label>
+      <input type="email" name="email" required>
+      <label>Senha</label>
+      <input type="password" name="senha" required>
+      <button type="submit">Entrar</button>
+    </form>
+    <p class="dica">
+      Usuarios de teste (criados pelo seed.js):<br>
+      admin@teste.com / admin123 (perfil admin)<br>
+      usuario@teste.com / user123 (perfil usuario)
+    </p>
+  </div>
+</body>
+</html>

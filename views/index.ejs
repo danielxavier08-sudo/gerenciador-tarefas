@@ -1,0 +1,51 @@
+<%- include('partials/header', { tituloPagina }) %>
+
+<div class="card">
+  <h3>Nova tarefa</h3>
+  <form method="POST" action="/tarefas">
+    <label>Titulo</label>
+    <input type="text" name="titulo" required>
+    <label>Descricao</label>
+    <textarea name="descricao" rows="2"></textarea>
+    <button type="submit">Adicionar</button>
+  </form>
+</div>
+
+<% if (tarefas.length === 0) { %>
+  <div class="card">
+    <p>Nenhuma tarefa cadastrada.</p>
+  </div>
+<% } else { %>
+
+  <% if (tarefas.every(t => t.status === 'concluida')) { %>
+    <div class="card">
+      <p><strong>Todas as tarefas concluidas</strong></p>
+    </div>
+  <% } %>
+
+  <% tarefas.forEach(tarefa => { %>
+    <div class="card">
+      <h3><%= tarefa.titulo %> <span class="tag <%= tarefa.status %>"><%= tarefa.status %></span></h3>
+
+      <% if (tarefa.descricao) { %>
+        <p><%= tarefa.descricao %></p>
+      <% } else { %>
+        <p><em>Sem descricao</em></p>
+      <% } %>
+
+      <form method="POST" action="/tarefas/<%= tarefa.id %>/status" style="display:inline;">
+        <button type="submit">
+          <%= tarefa.status === 'pendente' ? 'Marcar como concluida' : 'Marcar como pendente' %>
+        </button>
+      </form>
+
+      <% if (usuarioLogado.perfil === 'admin') { %>
+        <form method="POST" action="/tarefas/<%= tarefa.id %>/excluir" style="display:inline;">
+          <button type="submit" class="perigo">Excluir</button>
+        </form>
+      <% } %>
+    </div>
+  <% }); %>
+<% } %>
+
+<%- include('partials/footer') %>
