@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerenciador de Tarefas - Vue</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f5f7;
+      margin: 0;
+      padding: 2rem;
+      color: #222;
+    }
+    #app {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+    .boas-vindas {
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+    .cartao {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    form label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+      margin-top: 0.75rem;
+    }
+    form input, form textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.95rem;
+    }
+    form button {
+      margin-top: 1rem;
+      padding: 0.55rem 1.1rem;
+      background: #2d6cdf;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    form button:disabled {
+      background: #9db6e8;
+      cursor: not-allowed;
+    }
+    .carregando {
+      color: #777;
+      font-style: italic;
+    }
+    .vazio {
+      color: #777;
+    }
+    ul.lista-tarefas {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    li.tarefa {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    li.tarefa:last-child {
+      border-bottom: none;
+    }
+    .tarefa-info strong {
+      display: block;
+    }
+    .tarefa-info span.desc {
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .status-pendente {
+      color: #b45309;
+      font-weight: bold;
+    }
+    .status-concluida {
+      color: #15803d;
+      font-weight: bold;
+    }
+    .tarefa button {
+      padding: 0.4rem 0.75rem;
+      border: 1px solid #2d6cdf;
+      background: #fff;
+      color: #2d6cdf;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .erro {
+      background: #fdecea;
+      color: #b3261e;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Gerenciador de Tarefas</h1>
+    <p class="boas-vindas">Bem-vindo(a)! Aqui você acompanha e cadastra suas tarefas usando a nova interface em Vue.js.</p>
+
+    <div v-if="erro" class="erro">{{ erro }}</div>
+
+    <div class="cartao">
+      <h2 style="margin-top:0;">Nova tarefa</h2>
+      <form @submit.prevent="cadastrarTarefa">
+        <label for="titulo">Título</label>
+        <input id="titulo" type="text" v-model="novaTarefa.titulo" placeholder="Ex: Estudar para a prova" />
+
+        <label for="descricao">Descrição</label>
+        <textarea id="descricao" v-model="novaTarefa.descricao" rows="3" placeholder="Detalhes da tarefa (opcional)"></textarea>
+
+        <button type="submit" :disabled="enviando">
+          {{ enviando ? 'Salvando...' : 'Cadastrar tarefa' }}
+        </button>
+      </form>
+    </div>
+
+    <div class="cartao">
+      <h2 style="margin-top:0;">Minhas tarefas</h2>
+
+      <p v-if="carregando" class="carregando">Carregando tarefas...</p>
+
+      <template v-else>
+        <p v-if="tarefas.length === 0" class="vazio">Nenhuma tarefa cadastrada ainda.</p>
+
+        <ul v-else class="lista-tarefas">
+          <li class="tarefa" v-for="tarefa in tarefas" :key="tarefa.id">
+            <div class="tarefa-info">
+              <strong>{{ tarefa.titulo }}</strong>
+              <span class="desc" v-if="tarefa.descricao">{{ tarefa.descricao }}</span>
+              <span :class="tarefa.status === 'pendente' ? 'status-pendente' : 'status-concluida'">
+                {{ tarefa.status === 'pendente' ? 'Pendente' : 'Concluída' }}
+              </span>
+            </div>
+            <button @click="alternarStatus(tarefa)">
+              Marcar como {{ tarefa.status === 'pendente' ? 'concluída' : 'pendente' }}
+            </button>
+          </li>
+        </ul>
+      </template>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, reactive, ref, onMounted } = Vue;
+
+    createApp({
+      setup() {
+        const tarefas = ref([]);
+        const carregando = ref(true);
+        const enviando = ref(false);
+        const erro = ref(null);
+        const novaTarefa = reactive({ titulo: '', descricao: '' });
+
+        async function carregarTarefas() {
+          carregando.value = true;
+          erro.value = null;
+          try {
+            const resposta = await fetch('/api/tarefas', {
+              credentials: 'same-origin'
+            });
+
+            if (!resposta.ok) {
+              throw new Error('Não foi possível carregar as tarefas (status ' + resposta.status + ').');
+            }
+
+            tarefas.value = await resposta.json();
+          } catch (e) {
+            erro.value = 'Erro ao carregar tarefas: ' + e.message;
+          } finally {
+            carregando.value = false;
+          }
+        }
+
+        async function cadastrarTarefa() {
+          if (!novaTarefa.titulo || novaTarefa.titulo.trim() === '') {
+            erro.value = 'O título da tarefa é obrigatório.';
+            return;
+          }
+
+          enviando.value = true;
+          erro.value = null;
+          try {
+            const resposta = await fetch('/api/tarefas', {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                titulo: novaTarefa.titulo,
+                descricao: novaTarefa.descricao
+              })
+            });
+
+            if (!resposta.ok) {
+              const dados = await resposta.json().catch(() => ({}));
+              throw new Error(dados.erro || ('Erro ao cadastrar tarefa (status ' + resposta.status + ').'));
+            }
+
+            novaTarefa.titulo = '';
+            novaTarefa.descricao = '';
+            await carregarTarefas();
+          } catch (e) {
+            erro.value = e.message;
+          } finally {
+            enviando.value = false;
+          }
+        }
+
+        async function alternarStatus(tarefa) {
+          erro.value = null;
+          try {
+            const resposta = await fetch('/api/tarefas/' + tarefa.id + '/status', {
+              method: 'POST',
+              credentials: 'same-origin'
+            });
+
+            if (!resposta.ok) {
+              const dados = await resposta.json().catch(() => ({}));
+              throw new Error(dados.erro || ('Erro ao alterar status (status ' + resposta.status + ').'));
+            }
+
+            const tarefaAtualizada = await resposta.json();
+            const indice = tarefas.value.findIndex(t => t.id === tarefaAtualizada.id);
+            if (indice !== -1) {
+              tarefas.value[indice] = tarefaAtualizada;
+            }
+          } catch (e) {
+            erro.value = e.message;
+          }
+        }
+
+        onMounted(carregarTarefas);
+
+        return {
+          tarefas,
+          carregando,
+          enviando,
+          erro,
+          novaTarefa,
+          cadastrarTarefa,
+          alternarStatus
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>

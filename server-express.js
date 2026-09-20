@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
@@ -141,6 +142,73 @@ app.post('/tarefas/:id/excluir', requireAuth, requireAdmin, async (req, res, nex
 
     await tarefa.destroy();
     res.redirect('/');
+  } catch (erro) {
+    next(erro);
+  }
+});
+
+// ---------------------------------------------------------------------
+// Tarefa 4.1 (Unidade 4) - Interface Vue.js
+// ---------------------------------------------------------------------
+
+// Rota protegida que serve a página Vue (exige login, igual as demais rotas)
+app.get('/vue', requireAuth, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'vue-tarefas.html'));
+});
+
+// API JSON usada pela interface Vue via fetch()
+app.get('/api/tarefas', requireAuth, async (req, res, next) => {
+  try {
+    const filtro = req.session.usuario.perfil === 'admin'
+      ? {}
+      : { usuarioId: req.session.usuario.id };
+
+    const tarefas = await Tarefa.findAll({ where: filtro, order: [['id', 'DESC']] });
+    res.json(tarefas);
+  } catch (erro) {
+    next(erro);
+  }
+});
+
+app.post('/api/tarefas', requireAuth, async (req, res, next) => {
+  try {
+    const { titulo, descricao } = req.body;
+
+    if (!titulo || titulo.trim() === '') {
+      return res.status(400).json({ erro: 'O titulo da tarefa e obrigatorio.' });
+    }
+
+    const tarefa = await Tarefa.create({
+      titulo: titulo.trim(),
+      descricao: descricao || '',
+      status: 'pendente',
+      usuarioId: req.session.usuario.id
+    });
+
+    res.status(201).json(tarefa);
+  } catch (erro) {
+    next(erro);
+  }
+});
+
+app.post('/api/tarefas/:id/status', requireAuth, async (req, res, next) => {
+  try {
+    const tarefa = await Tarefa.findByPk(req.params.id);
+
+    if (!tarefa) {
+      return res.status(404).json({ erro: 'Tarefa nao encontrada.' });
+    }
+
+    const ehDono = tarefa.usuarioId === req.session.usuario.id;
+    const ehAdmin = req.session.usuario.perfil === 'admin';
+    if (!ehDono && !ehAdmin) {
+      return res.status(403).json({ erro: 'Voce nao tem permissao para alterar esta tarefa.' });
+    }
+
+    tarefa.status = tarefa.status === 'pendente' ? 'concluida' : 'pendente';
+    await tarefa.save();
+
+    res.json(tarefa);
   } catch (erro) {
     next(erro);
   }
