@@ -2,16 +2,14 @@ function requireAuth(req, res, next) {
   if (req.session && req.session.usuario) {
     return next();
   }
-  return res.redirect('/login');
+  return res.status(401).json({ erro: 'Voce precisa fazer login.' });
 }
 
 function requireAdmin(req, res, next) {
   if (req.session && req.session.usuario && req.session.usuario.perfil === 'admin') {
     return next();
   }
-  const erro = new Error('Voce nao tem permissao para realizar esta acao.');
-  erro.status = 403;
-  return next(erro);
+  return res.status(403).json({ erro: 'Voce nao tem permissao para realizar esta acao.' });
 }
 
 module.exports = { requireAuth, requireAdmin };
