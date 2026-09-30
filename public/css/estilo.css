@@ -1,0 +1,151 @@
+* { box-sizing: border-box; }
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+  margin: 0;
+}
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.menu {
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.menu .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.menu nav a {
+  margin-right: 16px;
+  text-decoration: none;
+}
+
+.menu nav a.router-link-exact-active,
+.subnav a.router-link-active {
+  font-weight: bold;
+  border-bottom: 2px solid #2f6fed;
+}
+
+.menu .usuario span {
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}
+
+.card.estreito {
+  max-width: 380px;
+  margin: 60px auto;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0 12px;
+}
+
+button {
+  background: #2f6fed;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #9db6e8;
+  cursor: not-allowed;
+}
+
+button.perigo {
+  background: #e0453b;
+}
+
+button.claro {
+  background: #fff;
+  color: #2f6fed;
+  border: 1px solid #2f6fed;
+}
+
+a {
+  color: #2f6fed;
+}
+
+.tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  color: #fff;
+}
+
+.tag.pendente { background: #e0a72d; }
+.tag.concluida { background: #2fa84f; }
+.tag.admin { background: #6b46c1; }
+.tag.usuario { background: #718096; }
+
+.erro {
+  background: #fdecea;
+  color: #b3261e;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+
+.aviso {
+  color: #666;
+}
+
+.linha-tarefa {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.linha-tarefa h3 {
+  margin: 0 0 6px;
+}
+
+.linha-tarefa p {
+  margin: 0;
+  color: #555;
+}
+
+.subnav {
+  margin-bottom: 16px;
+}
+
+.subnav a {
+  margin-right: 16px;
+  text-decoration: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
