@@ -52,14 +52,29 @@
         </form>
       </div>
 
+      <div class="filtros">
+        <button
+          v-for="opcao in opcoesFiltro"
+          :key="opcao.valor"
+          type="button"
+          class="claro"
+          :class="{ ativo: filtro === opcao.valor }"
+          @click="filtro = opcao.valor"
+        >{{ opcao.rotulo }}</button>
+      </div>
+
       <p v-if="carregando" class="aviso">Carregando tarefas...</p>
 
       <div v-else-if="tarefas.length === 0" class="card">
         <p>Nenhuma tarefa cadastrada.</p>
       </div>
 
-      <template v-else>
-        <div v-for="tarefa in tarefas" :key="tarefa.id" class="card">
+      <div v-else-if="tarefasFiltradas.length === 0" class="card">
+        <p>Nenhuma tarefa neste filtro.</p>
+      </div>
+
+      <transition-group v-else name="lista" tag="div" class="lista-pai">
+        <div v-for="tarefa in tarefasFiltradas" :key="tarefa.id" class="card">
           <div class="linha-tarefa">
             <div>
               <h3>
@@ -73,7 +88,7 @@
             </button>
           </div>
         </div>
-      </template>
+      </transition-group>
     </div>
   </script>
 

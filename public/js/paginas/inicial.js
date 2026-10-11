@@ -7,8 +7,26 @@ var PaginaInicial = {
       enviando: false,
       erro: '',
       titulo: '',
-      descricao: ''
+      descricao: '',
+      filtro: 'todas',
+      opcoesFiltro: [
+        { valor: 'todas', rotulo: 'Todas' },
+        { valor: 'pendente', rotulo: 'Pendentes' },
+        { valor: 'concluida', rotulo: 'Concluidas' }
+      ]
     };
+  },
+  computed: {
+    // Lista exibida: recalculada sozinha quando o filtro ou as tarefas mudam
+    tarefasFiltradas: function () {
+      var filtro = this.filtro;
+      if (filtro === 'todas') {
+        return this.tarefas;
+      }
+      return this.tarefas.filter(function (tarefa) {
+        return tarefa.status === filtro;
+      });
+    }
   },
   mounted: function () {
     this.carregar();

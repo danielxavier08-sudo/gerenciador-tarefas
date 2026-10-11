@@ -149,3 +149,42 @@ th, td {
   border-bottom: 1px solid #eee;
   font-size: 14px;
 }
+
+/* Filtro de tarefas */
+.filtros {
+  margin-bottom: 12px;
+}
+
+.filtros button {
+  margin-right: 8px;
+}
+
+button.claro.ativo {
+  background: #2f6fed;
+  color: #fff;
+}
+
+/* Transicao da lista (TransitionGroup name="lista") */
+.lista-enter-active,
+.lista-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.lista-enter-from,
+.lista-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.lista-pai {
+  position: relative;
+}
+
+.lista-move {
+  transition: transform 0.3s ease;
+}
+
+.lista-leave-active {
+  position: absolute;
+  width: 100%;
+}
