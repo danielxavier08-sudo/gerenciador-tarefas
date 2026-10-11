@@ -20,9 +20,13 @@ var rotas = [
   {
     path: '/admin',
     component: PaginaAdmin,
-    redirect: { name: 'admin-objeto' },
     meta: { requerLogin: true, requerAdmin: true },
     children: [
+      {
+        path: '',
+        name: 'admin-inicial',
+        component: PaginaAdminInicial
+      },
       {
         path: 'objeto',
         name: 'admin-objeto',
@@ -69,7 +73,7 @@ router.beforeEach(function (to) {
     }
 
     if (to.name === 'login' && estado.usuario) {
-      return { name: 'inicial' };
+      return { name: estado.usuario.perfil === 'admin' ? 'admin-inicial' : 'inicial' };
     }
 
     return true;

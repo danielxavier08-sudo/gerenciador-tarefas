@@ -1,10 +1,15 @@
-// Funcao unica para conversar com a API do servidor
+// Funcao unica para conversar com a API do servidor.
+// O token JWT fica na sessionStorage e vai em todas as requisicoes.
 function api(url, metodo, dados) {
   var opcoes = {
     method: metodo || 'GET',
-    credentials: 'same-origin',
-    headers: {}
+    headers: { 'Accept': 'application/json' }
   };
+
+  var token = sessionStorage.getItem('token');
+  if (token) {
+    opcoes.headers['Authorization'] = 'Bearer ' + token;
+  }
 
   if (dados !== undefined) {
     opcoes.headers['Content-Type'] = 'application/json';
@@ -19,10 +24,13 @@ function api(url, metodo, dados) {
         var erro = new Error(corpo.erro || 'Erro na requisicao.');
         erro.status = resposta.status;
 
-        // Sessao expirada: volta para o login
+        // Token ausente, invalido ou expirado: limpa tudo e volta para o login
         if (resposta.status === 401 && url !== '/api/login') {
+          sessionStorage.removeItem('token');
           estado.usuario = null;
-          router.push({ name: 'login' });
+          if (estado.carregado) {
+            router.push({ name: 'login' });
+          }
         }
 
         throw erro;
@@ -32,7 +40,14 @@ function api(url, metodo, dados) {
   });
 }
 
+// Descobre quem esta logado a partir do token guardado (usado ao abrir ou recarregar a pagina)
 function carregarSessao() {
+  if (!sessionStorage.getItem('token')) {
+    estado.usuario = null;
+    estado.carregado = true;
+    return Promise.resolve();
+  }
+
   return api('/api/sessao').then(function (dados) {
     estado.usuario = dados.usuario;
     estado.carregado = true;

@@ -32,7 +32,7 @@ body {
 }
 
 .menu nav a.router-link-exact-active,
-.subnav a.router-link-active {
+.subnav a.router-link-exact-active {
   font-weight: bold;
   border-bottom: 2px solid #2f6fed;
 }
@@ -187,4 +187,45 @@ button.claro.ativo {
 .lista-leave-active {
   position: absolute;
   width: 100%;
+}
+
+/* Paginacao da lista */
+.paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+/* Botoes lado a lado nos formularios e tabelas */
+form button {
+  margin-right: 8px;
+}
+
+td.acoes a,
+td.acoes button {
+  margin-right: 6px;
+}
+
+/* Resumo da Inicial do admin */
+.resumo {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 12px;
+}
+
+.resumo div {
+  display: flex;
+  flex-direction: column;
+}
+
+.resumo strong {
+  font-size: 28px;
+}
+
+.resumo span {
+  color: #666;
+  font-size: 14px;
 }
