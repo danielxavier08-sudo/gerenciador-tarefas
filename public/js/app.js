@@ -10,10 +10,10 @@ var App = {
   },
   methods: {
     sair: function () {
-      api('/api/logout', 'POST').then(function () {
-        estado.usuario = null;
-        router.push({ name: 'login' });
-      });
+      // Com JWT nao ha nada para desfazer no servidor: basta descartar o token
+      sessionStorage.removeItem('token');
+      estado.usuario = null;
+      router.push({ name: 'login' });
     }
   }
 };
