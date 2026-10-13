@@ -1,0 +1,36 @@
+<%- include('partials/cabecalho', { titulo: titulo, ativo: 'mural' }) %>
+<p><a href="/tarefas">Voltar ao mural</a></p>
+
+<article class="painel detalhe">
+  <div class="etiquetas">
+    <span class="etiqueta etiqueta-status-<%= tarefa.status %>"><%= rotuloStatus(tarefa.status) %></span>
+    <span class="etiqueta etiqueta-prioridade-<%= tarefa.prioridade %>"><%= rotuloPrioridade(tarefa.prioridade) %></span>
+    <% if (tarefa.atrasada) { %>
+      <span class="etiqueta etiqueta-atrasada">Atrasada</span>
+    <% } %>
+  </div>
+
+  <h1><%= tarefa.titulo %></h1>
+
+  <% if (tarefa.descricao) { %>
+    <p class="detalhe-descricao"><%= tarefa.descricao %></p>
+  <% } else { %>
+    <p class="texto-suave">Esta tarefa não possui descrição.</p>
+  <% } %>
+
+  <dl class="lista-dados">
+    <div>
+      <dt>Responsável</dt>
+      <dd><%= tarefa.autor %></dd>
+    </div>
+    <div>
+      <dt>Prazo</dt>
+      <dd><%= formatarPrazo(tarefa.prazo) %></dd>
+    </div>
+    <div>
+      <dt>Criada em</dt>
+      <dd><%= tarefa.criadoEm ? formatarData(tarefa.criadoEm) : 'Não informado' %></dd>
+    </div>
+  </dl>
+</article>
+<%- include('partials/rodape') %>

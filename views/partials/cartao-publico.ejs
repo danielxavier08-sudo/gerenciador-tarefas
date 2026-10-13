@@ -1,0 +1,14 @@
+<article class="cartao-publico">
+  <div class="etiquetas">
+    <span class="etiqueta etiqueta-status-<%= tarefa.status %>"><%= rotuloStatus(tarefa.status) %></span>
+    <span class="etiqueta etiqueta-prioridade-<%= tarefa.prioridade %>"><%= rotuloPrioridade(tarefa.prioridade) %></span>
+  </div>
+  <h3><a href="/tarefas/<%= tarefa.id %>"><%= tarefa.titulo %></a></h3>
+  <% if (tarefa.descricao) { %>
+    <p class="resumo-texto"><%= tarefa.descricao.length > 140 ? tarefa.descricao.slice(0, 140) + '...' : tarefa.descricao %></p>
+  <% } %>
+  <p class="cartao-meta">
+    <span>Por <%= tarefa.autor %></span>
+    <span class="<%= tarefa.atrasada ? 'texto-perigo' : '' %>"><%= formatarPrazo(tarefa.prazo) %></span>
+  </p>
+</article>

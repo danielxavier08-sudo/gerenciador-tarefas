@@ -1,43 +1,48 @@
 const jwt = require('jsonwebtoken');
+const { Usuario } = require('../models');
+const { ErroHttp } = require('../utils/erros');
 
-// O segredo vem do .env (JWT_SECRET). O valor padrao serve so para desenvolvimento.
 const SEGREDO = process.env.JWT_SECRET || 'segredo-de-desenvolvimento-troque-isso';
 
 if (!process.env.JWT_SECRET) {
-  console.warn('Aviso: JWT_SECRET nao definido no .env, usando o segredo padrao de desenvolvimento.');
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Defina JWT_SECRET no ambiente de producao.');
+  }
+  console.warn('Aviso: JWT_SECRET não definido, usando segredo de desenvolvimento.');
 }
 
 function gerarToken(usuario) {
-  return jwt.sign(
-    { id: usuario.id, email: usuario.email, perfil: usuario.perfil },
-    SEGREDO,
-    { algorithm: 'HS256', expiresIn: '1h' }
-  );
+  return jwt.sign({ id: usuario.id }, SEGREDO, { algorithm: 'HS256', expiresIn: '2h' });
 }
 
-// Le o cabecalho "Authorization: Bearer <token>" e coloca o usuario em req.usuario
-function requireAuth(req, res, next) {
-  const cabecalho = req.headers.authorization || '';
-  const partes = cabecalho.split(' ');
+async function requireAuth(req, res, next) {
+  const [tipo, token] = (req.headers.authorization || '').split(' ');
 
-  if (partes.length !== 2 || partes[0] !== 'Bearer') {
-    return res.status(401).json({ erro: 'Voce precisa fazer login.' });
+  if (tipo !== 'Bearer' || !token) {
+    return next(new ErroHttp(401, 'Você precisa fazer login.'));
   }
 
+  let usuario;
   try {
-    const dados = jwt.verify(partes[1], SEGREDO, { algorithms: ['HS256'] });
-    req.usuario = { id: dados.id, email: dados.email, perfil: dados.perfil };
-    return next();
+    const dados = jwt.verify(token, SEGREDO, { algorithms: ['HS256'] });
+    usuario = await Usuario.findByPk(dados.id, { attributes: ['id', 'nome', 'email', 'perfil'] });
   } catch (erro) {
-    return res.status(401).json({ erro: 'Sessao invalida ou expirada. Faca login novamente.' });
+    usuario = null;
   }
+
+  if (!usuario) {
+    return next(new ErroHttp(401, 'Sessão inválida ou expirada. Faça login novamente.'));
+  }
+
+  req.usuario = usuario.get({ plain: true });
+  return next();
 }
 
 function requireAdmin(req, res, next) {
   if (req.usuario && req.usuario.perfil === 'admin') {
     return next();
   }
-  return res.status(403).json({ erro: 'Voce nao tem permissao para realizar esta acao.' });
+  return next(new ErroHttp(403, 'Você não tem permissão para realizar esta ação.'));
 }
 
 module.exports = { gerarToken, requireAuth, requireAdmin };

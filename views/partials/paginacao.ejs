@@ -1,0 +1,15 @@
+<% if (totalPaginas > 1) { %>
+  <nav class="paginacao" aria-label="Paginação">
+    <% if (pagina > 1) { %>
+      <a class="btn btn-secundario btn-pequeno" href="<%= montarUrl(base, { busca: busca, pagina: pagina - 1 }) %>">Anterior</a>
+    <% } else { %>
+      <span class="btn btn-secundario btn-pequeno btn-desativado">Anterior</span>
+    <% } %>
+    <span>Página <%= pagina %> de <%= totalPaginas %> (<%= total %> tarefas)</span>
+    <% if (pagina < totalPaginas) { %>
+      <a class="btn btn-secundario btn-pequeno" href="<%= montarUrl(base, { busca: busca, pagina: pagina + 1 }) %>">Próxima</a>
+    <% } else { %>
+      <span class="btn btn-secundario btn-pequeno btn-desativado">Próxima</span>
+    <% } %>
+  </nav>
+<% } %>

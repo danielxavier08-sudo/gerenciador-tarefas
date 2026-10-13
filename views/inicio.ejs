@@ -1,0 +1,50 @@
+<%- include('partials/cabecalho', { titulo: titulo, ativo: 'inicio' }) %>
+<section class="hero">
+  <div class="hero-texto">
+    <h1>Organize suas tarefas com clareza</h1>
+    <p>
+      Cadastre atividades, defina prioridades e prazos, acompanhe o andamento no painel
+      e compartilhe no mural o que for público.
+    </p>
+    <div class="hero-acoes">
+      <a href="/app" class="btn btn-primario">Acessar o sistema</a>
+      <a href="/tarefas" class="btn btn-secundario">Ver o mural</a>
+    </div>
+  </div>
+  <img class="hero-logo" src="/img/simbolo-ifce.png" alt="">
+</section>
+
+<section class="grade-metricas">
+  <div class="metrica">
+    <strong><%= totais.publicas %></strong>
+    <span>tarefas públicas</span>
+  </div>
+  <div class="metrica">
+    <strong><%= totais.concluidas %></strong>
+    <span>concluídas no mural</span>
+  </div>
+  <div class="metrica">
+    <strong><%= totais.usuarios %></strong>
+    <span>usuários cadastrados</span>
+  </div>
+</section>
+
+<section>
+  <div class="secao-topo">
+    <h2>Últimas tarefas do mural</h2>
+    <a href="/tarefas">Ver todas</a>
+  </div>
+  <% if (tarefas.length === 0) { %>
+    <div class="vazio">
+      <h3>Nenhuma tarefa pública ainda</h3>
+      <p>Marque uma tarefa como pública no sistema para que ela apareça aqui.</p>
+    </div>
+  <% } else { %>
+    <div class="grade-cartoes">
+      <% tarefas.forEach(function (tarefa) { %>
+        <%- include('partials/cartao-publico', { tarefa: tarefa }) %>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+<%- include('partials/rodape') %>
