@@ -1,0 +1,34 @@
+<%- include('partials/cabecalho', { titulo: titulo, ativo: 'autor' }) %>
+<h1>Autor</h1>
+
+<section class="painel">
+  <h2><%= autor.nome %></h2>
+
+  <h3>Formações</h3>
+  <% if (autor.formacoes.length === 0) { %>
+    <p class="texto-suave">Nenhuma formação cadastrada.</p>
+  <% } else { %>
+    <ul class="lista-simples">
+      <% autor.formacoes.forEach(function (formacao) { %>
+        <li>
+          <strong><%= formacao.curso %></strong>
+          <span><%= formacao.instituicao %>, <%= formacao.situacao %></span>
+        </li>
+      <% }); %>
+    </ul>
+  <% } %>
+</section>
+
+<section class="painel">
+  <h3>Sobre o projeto</h3>
+  <p>
+    Aplicação web completa desenvolvida na disciplina de Desenvolvimento Web III. O servidor usa
+    Node.js, Express, Sequelize e MariaDB, com páginas renderizadas por EJS e uma API REST protegida
+    por JWT. O painel é uma aplicação de página única feita com Vue 3 e Vue Router.
+  </p>
+  <p class="texto-suave">
+    Os dados desta página também estão disponíveis em JSON: envie a requisição com o
+    cabeçalho <code>Accept: application/json</code>.
+  </p>
+</section>
+<%- include('partials/rodape') %>

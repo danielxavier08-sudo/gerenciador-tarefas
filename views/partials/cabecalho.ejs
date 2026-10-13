@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= titulo %> | Gerenciador de Tarefas</title>
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+  <header class="site-cabecalho">
+    <div class="container site-cabecalho-interno">
+      <a class="marca" href="/">
+        <img src="/img/simbolo-ifce.png" alt="Símbolo do IFCE">
+        <span class="marca-texto">
+          Gerenciador de Tarefas
+          <small>Instituto Federal do Ceará</small>
+        </span>
+      </a>
+      <nav class="menu-principal" aria-label="Principal">
+        <a href="/" class="<%= typeof ativo !== 'undefined' && ativo === 'inicio' ? 'ativo' : '' %>">Início</a>
+        <a href="/tarefas" class="<%= typeof ativo !== 'undefined' && ativo === 'mural' ? 'ativo' : '' %>">Mural</a>
+        <a href="/autor" class="<%= typeof ativo !== 'undefined' && ativo === 'autor' ? 'ativo' : '' %>">Autor</a>
+        <a href="/app" class="btn btn-primario btn-pequeno">Acessar o sistema</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container conteudo">

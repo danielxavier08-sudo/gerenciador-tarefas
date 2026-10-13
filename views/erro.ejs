@@ -1,0 +1,8 @@
+<%- include('partials/cabecalho', { titulo: titulo }) %>
+<section class="vazio vazio-grande">
+  <p class="codigo-erro"><%= status %></p>
+  <h1><%= status === 404 ? 'Página não encontrada' : 'Algo deu errado' %></h1>
+  <p><%= mensagem %></p>
+  <a href="/" class="btn btn-primario">Voltar ao início</a>
+</section>
+<%- include('partials/rodape') %>

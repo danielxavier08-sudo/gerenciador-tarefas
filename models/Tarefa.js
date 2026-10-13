@@ -17,7 +17,27 @@ const Tarefa = sequelize.define('Tarefa', {
   },
   status: {
     type: DataTypes.STRING(20),
+    allowNull: false,
     defaultValue: 'pendente'
+  },
+  prioridade: {
+    type: DataTypes.STRING(10),
+    allowNull: false,
+    defaultValue: 'media'
+  },
+  prazo: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
+  },
+  publica: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  criadoEm: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    defaultValue: DataTypes.NOW
   },
   usuarioId: {
     type: DataTypes.INTEGER,

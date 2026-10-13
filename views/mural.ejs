@@ -1,0 +1,27 @@
+<%- include('partials/cabecalho', { titulo: titulo, ativo: 'mural' }) %>
+<div class="secao-topo">
+  <h1>Mural de tarefas</h1>
+</div>
+
+<form class="barra-ferramentas" method="get" action="/tarefas">
+  <input type="search" name="busca" value="<%= busca %>" placeholder="Buscar por título ou descrição" aria-label="Buscar">
+  <button type="submit" class="btn btn-primario">Buscar</button>
+  <% if (busca) { %>
+    <a class="btn btn-secundario" href="/tarefas">Limpar</a>
+  <% } %>
+</form>
+
+<% if (itens.length === 0) { %>
+  <div class="vazio">
+    <h3>Nenhuma tarefa encontrada</h3>
+    <p><%= busca ? 'Tente buscar por outro termo.' : 'Ainda não há tarefas públicas.' %></p>
+  </div>
+<% } else { %>
+  <div class="grade-cartoes">
+    <% itens.forEach(function (tarefa) { %>
+      <%- include('partials/cartao-publico', { tarefa: tarefa }) %>
+    <% }); %>
+  </div>
+  <%- include('partials/paginacao', { base: '/tarefas', busca: busca, pagina: pagina, totalPaginas: totalPaginas, total: total }) %>
+<% } %>
+<%- include('partials/rodape') %>
